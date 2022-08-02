@@ -32,3 +32,7 @@ $ npm run start
 ## Usage
 
 This is just the server and is designed to just be ran somewhere. Once you got the server running, use the client (https://github.com/mrd875/GroupwareToolkitClient) to start using GT.
+
+
+## command to create certificates 
+` openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes`

@@ -1,9 +1,20 @@
 const consola = require('consola')
 
-const socketio = require('socket.io')
+const app = require('express')()
+const https = require('https')
+const fs = require('fs')
+
+var server = https.createServer({
+  key: fs.readFileSync('./certs/key.pem'),
+  cert: fs.readFileSync('./certs/cert.pem'),
+  requestCert: false,
+  rejectUnauthorized: false
+}, app);
+
+
+const io = require('socket.io')(server)
 const _ = require('lodash')
 
-const io = socketio()
 
 // the time at which unreliable messages will collapse and queue and then fire.
 const BURST_DELAY = 50 // ms, 20 tickrate
@@ -439,4 +450,4 @@ io.on('connection', socket => {
   })
 })
 
-module.exports = io
+module.exports = server
