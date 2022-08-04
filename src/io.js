@@ -1,19 +1,38 @@
 const consola = require('consola')
-
+const _ = require('lodash')
 const app = require('express')()
 const https = require('https')
 const fs = require('fs')
 
-var server = https.createServer({
-  key: fs.readFileSync('./certs/key.pem'),
-  cert: fs.readFileSync('./certs/cert.pem'),
-  requestCert: false,
-  rejectUnauthorized: false
-}, app);
+var server;
 
+if (process.env.NODE_ENV == "production") {
+  server = https.createServer({
+    key: fs.readFileSync('/etc/letsencrypt/live/hci-sandbox.usask.ca/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/hci-sandbox.usask.ca/cert.pem'),
+    requestCert: false,
+    rejectUnauthorized: false
+  }, app);
+}
+else {
+  server = https.createServer({
+    key: fs.readFileSync('./certs/key.pem'),
+    cert: fs.readFileSync('./certs/cert.pem'),
+    requestCert: false,
+    rejectUnauthorized: false
+  }, app);
+}
 
-const io = require('socket.io')(server)
-const _ = require('lodash')
+let io;
+if (process.env.NODE_ENV == 'unsecure') {
+  io = require('socket.io')();
+  // bound server to io and return it in module.exports
+  server = io;
+}
+else {
+  io = require('socket.io')(server);
+}
+
 
 
 // the time at which unreliable messages will collapse and queue and then fire.

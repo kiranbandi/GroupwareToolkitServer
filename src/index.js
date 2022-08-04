@@ -1,9 +1,9 @@
-const server = require('./io')
+const io = require('./io')
 const consola = require('consola')
 
 const port = process.env.PORT || 3001
 
-server.listen(port)
+io.listen(port)
 
 consola.ready({
   message: `Server listening on port ${port}`,
